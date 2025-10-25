@@ -3,6 +3,7 @@ import LogoutButton from "@/modules/auth/components/logout-button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { getCurrentDbUser } from "@/modules/auth/actions";
+import StripeComponent from "@/modules/auth/stripe/components/stripe-component";
 
 
 export default async function Home({
@@ -22,7 +23,7 @@ export default async function Home({
           <TabsTrigger value="razorpay">Razorpay🔵</TabsTrigger>
         </TabsList>
         <TabsContent value="stripe">
-         <h1>StripeComponent</h1>
+         <StripeComponent/>
         </TabsContent>
         <TabsContent value="polar">
           <h1 className="text-zinc-600 font-semibold">
