@@ -7,8 +7,10 @@ import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Crown, Zap, Loader2 } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
+import { createCheckoutSession } from "../action";
+import { toast } from "sonner";
 
-const StripeComponent = () => {
+const StripeComponent = ({plan}) => {
   const { data, isPending } = authClient.useSession();
   const [isUpgrading , setIsUpgrading] = useState();
 
@@ -19,9 +21,30 @@ const StripeComponent = () => {
     return (names[0][0] + names[names.length - 1][0]).toUpperCase();
   };
 
-  const onUpragde =()=>{}
+  const onUpragde =async()=>{
+    try {
+      setIsUpgrading(true)
+      const {url} = await createCheckoutSession();
 
-  const onProAction = ()=>{}
+
+      if(url){
+        window.location.href = url;
+      }
+    } catch (error) {
+       console.error('Upgrade error:', error);
+      toast.error(error.message || 'Failed to start checkout');
+      setIsUpgrading(false);
+    }
+  }
+
+  const onProAction = () => {
+    // Demo action - show what pro users can do
+    if (isPro) {
+      toast.success('Pro feature activated! 🎉');
+    } else {
+      toast.info('Upgrade to Pro to unlock this feature');
+    }
+  };
 
   
   if (isPending) {
@@ -33,7 +56,7 @@ const StripeComponent = () => {
   }
 
   const user = data?.user;
-  const isPro = false;
+  const isPro = plan === "PREMIUM";
   return (
     <div className="w-full max-w-2xl mx-auto p-4">
       <Card className="overflow-hidden">
