@@ -4,6 +4,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { getCurrentDbUser } from "@/modules/auth/actions";
 import StripeComponent from "@/modules/stripe/components/stripe-component";
+import PolarComponent from "@/modules/polar/components/polar-components";
+import { polarClient } from "@/modules/polar/config/polar";
 
 
 export default async function Home({
@@ -12,6 +14,13 @@ export default async function Home({
   const {success , canceled} = await searchParams
   await requireAuth();
   const user = await getCurrentDbUser();
+
+  const customer = await polarClient.customers.getStateExternal({
+    externalId:user.id
+  })
+
+  console.log(customer)
+  const hasActivePolarSubscription = customer?.activeSubscriptions && customer.activeSubscriptions.length > 0
 
   return (
     <main className="flex flex-col items-center justify-center px-4 py-12">
@@ -26,9 +35,7 @@ export default async function Home({
          <StripeComponent plan={user?.plan}/>
         </TabsContent>
         <TabsContent value="polar">
-          <h1 className="text-zinc-600 font-semibold">
-            In upcoming lectures...
-          </h1>
+         <PolarComponent isPro={hasActivePolarSubscription}/>
         </TabsContent>
         <TabsContent value="razorpay">
           <h1 className="text-zinc-600 font-semibold">
