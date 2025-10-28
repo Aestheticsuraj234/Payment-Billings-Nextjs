@@ -6,6 +6,8 @@ import { getCurrentDbUser } from "@/modules/auth/actions";
 import StripeComponent from "@/modules/stripe/components/stripe-component";
 import PolarComponent from "@/modules/polar/components/polar-components";
 import { polarClient } from "@/modules/polar/config/polar";
+import RazorpayComponent from "@/modules/razorpay/components/razorpay-component";
+import { getCurrentRazorpayStatus } from "@/modules/razorpay/action";
 
 
 export default async function Home({
@@ -21,6 +23,10 @@ export default async function Home({
 
   console.log(customer)
   const hasActivePolarSubscription = customer?.activeSubscriptions && customer.activeSubscriptions.length > 0
+
+  const razorpayPlan = await getCurrentRazorpayStatus()
+
+  console.log(razorpayPlan)
 
   return (
     <main className="flex flex-col items-center justify-center px-4 py-12">
@@ -38,9 +44,7 @@ export default async function Home({
          <PolarComponent isPro={hasActivePolarSubscription}/>
         </TabsContent>
         <TabsContent value="razorpay">
-          <h1 className="text-zinc-600 font-semibold">
-            In upcoming lectures...
-          </h1>
+          <RazorpayComponent currentPlan={razorpayPlan}/>
         </TabsContent>
       </Tabs>
       <div className="mt-10 flex flex-col items-center justify-center"><LogoutButton /></div>
