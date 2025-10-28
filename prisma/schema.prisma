@@ -14,6 +14,11 @@ enum stripe_plan {
   PREMIUM
 }
 
+enum razorpay_plan {
+  FREE
+  PRO
+}
+
 model User {
   id            String    @id
   name          String
@@ -28,10 +33,25 @@ model User {
   stripeCustomerId  String?
   plan   stripe_plan   @default(FREE)
   stripe_subscription StripeSubscription?
+  razorpayPlan razorpay_plan  @default(FREE)
 
+    razorpay_subscription RazorpaySubscription?
   @@unique([email])
   @@map("user")
 }
+
+model RazorpaySubscription {
+  id  String @id @default(cuid())
+  userId String @unique
+  plan razorpay_plan
+  razorpaySubscriptionId String?
+  status String @default("active")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@map("razorpay_subscription")
+}
+
 
 model StripeSubscription {
   id  String @id @default(cuid())
